@@ -11,6 +11,14 @@ var budgetController = (function() {
     this.value = value;
   };
 
+  var calculateTotal = function(type) {
+    var sum = 0;
+    data.allItems[type].forEach(e => {
+      sum += e.value;
+    });
+    data.totals[type] = sum;
+  };
+
   var data = {
     allItems: {
       exp: [],
@@ -24,15 +32,20 @@ var budgetController = (function() {
     percentage: -1
   };
 
-  var calculateTotal = function(type) {
-    var sum = 0;
-    data.allItems[type].forEach(e => {
-      sum += e.value;
-    });
-    data.totals[type] = sum;
-  };
-
   return {
+    // delete an item for type and id
+    deleteItem: function(type, id) {
+      var ids, idx;
+      ids = data.allItems[type].map(function(element) {
+        return element.id;
+      });
+
+      idx = ids.indexOf(id);
+      if (idx !== -1) {
+        data.allItems[type].splice(idx, 1);
+      }
+    },
+
     getData: function() {
       return {
         budget: data.budget,
@@ -229,8 +242,9 @@ var Controller = (function(budgetCtrl, UICtrl) {
       // inc-1 exp-1
       splitID = itemID.split("-");
       type = splitID[0];
-      id = splitID[1];
-      console.log(type, id);
+      id = parseInt(splitID[1]);
+      budgetController.deleteItem(type, id);
+      updateBudget();
     }
   };
 
