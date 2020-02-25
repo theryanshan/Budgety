@@ -246,7 +246,7 @@ var UIController = (function() {
 
     displayBudget: function(budgetData) {
       var type;
-      budgetData.budget > 0 ? (type = "inc") : (type = "exp");
+      budgetData.budget >= 0 ? (type = "inc") : (type = "exp");
       document.querySelector(DOMStrings.budgetLabel).textContent = formatNumber(
         budgetData.budget,
         type
@@ -270,6 +270,20 @@ var UIController = (function() {
           DOMStrings.budgetExpensePercentageLabel
         ).textContent = "---";
       }
+    },
+
+    changeType: function() {
+      var fields = document.querySelectorAll(
+        DOMStrings.addDescription +
+          "," +
+          DOMStrings.addType +
+          "," +
+          DOMStrings.addValue
+      );
+      fields.forEach(ele => {
+        ele.classList.toggle("red-focus");
+      });
+      document.querySelector(DOMStrings.addBtn).classList.toggle("red");
     }
   };
 })();
@@ -288,6 +302,9 @@ var Controller = (function(budgetCtrl, UICtrl) {
     document
       .querySelector(DOM.container)
       .addEventListener("click", ctrlDeleteItem);
+    document
+      .querySelector(DOM.addType)
+      .addEventListener("change", UICtrl.changeType);
   };
 
   var updateBudget = function() {
