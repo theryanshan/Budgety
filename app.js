@@ -140,6 +140,7 @@ var UIController = (function() {
 
   var formatNumber = function(num, type) {
     var int, dec;
+    num = Math.abs(num);
     num = num.toFixed(2);
     num = num.split(".");
     int = num[0];
