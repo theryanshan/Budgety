@@ -137,6 +137,16 @@ var UIController = (function() {
     itemPercentageLabel: ".item__percentage"
   };
 
+  var formatNumber = function(num, type) {
+    var int, dec;
+    num = num.toFixed(2);
+    num = num.split(".");
+    int = num[0];
+    dec = num[1];
+    int = new Intl.NumberFormat().format(parseInt(int));
+    return (type === "exp" ? "-" : "+") + " " + int + "." + dec;
+  };
+
   return {
     getInputs: function() {
       return {
@@ -189,7 +199,7 @@ var UIController = (function() {
       }
       newHtml = html.replace("%id%", item.id);
       newHtml = newHtml.replace("%description%", item.description);
-      newHtml = newHtml.replace("%value%", item.value);
+      newHtml = newHtml.replace("%value%", formatNumber(item.value, type));
       dom.insertAdjacentHTML("beforeend", newHtml);
     },
 
@@ -210,15 +220,21 @@ var UIController = (function() {
     },
 
     displayBudget: function(budgetData) {
-      document.querySelector(DOMStrings.budgetLabel).textContent =
-        budgetData.budget;
+      var type;
+      budgetData.budget > 0 ? (type = "inc") : (type = "exp");
+      document.querySelector(DOMStrings.budgetLabel).textContent = formatNumber(
+        budgetData.budget,
+        type
+      );
       document.querySelector(
         DOMStrings.budgetExpensePercentageLabel
       ).textContent = budgetData.percentage;
-      document.querySelector(DOMStrings.budgetExpenseLabel).textContent =
-        budgetData.totalExp;
-      document.querySelector(DOMStrings.budgetIncomeLabel).textContent =
-        budgetData.totalInc;
+      document.querySelector(
+        DOMStrings.budgetExpenseLabel
+      ).textContent = formatNumber(budgetData.totalExp, "exp");
+      document.querySelector(
+        DOMStrings.budgetIncomeLabel
+      ).textContent = formatNumber(budgetData.totalInc, "inc");
 
       if (budgetData.percentage > 0) {
         document.querySelector(
@@ -319,8 +335,8 @@ var Controller = (function(budgetCtrl, UICtrl) {
       UIController.displayBudget({
         budget: 0,
         percentage: -1,
-        expenseTotal: 0,
-        incomeTotal: 0
+        totalExp: 0,
+        totalInc: 0
       });
     }
   };
